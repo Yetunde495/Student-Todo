@@ -1,0 +1,51 @@
+html, body {
+    height: 100%;
+}
+
+
+.navbar-section {
+    padding: 1% 5%;
+    background-color: #ffa500e0;
+}
+.navbar-logo {
+   width: 200px; 
+}
+.nav-item {
+    padding: 0 18px;
+}
+.navbar-btn {
+    padding: 5px;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    background-color: #073d7ef0;
+}
+.btn-text {
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.intro-section {
+    padding: 5% 5%;
+}
+.intro-text {
+    padding: 15% 10% 15% 10%;
+}
+
+.form-section {
+    padding: 2% 7%;
+}
+.f {
+    background: linear-gradient(360deg, #f28e26 0%, #ffa500e0 100%); 
+    width: 679px;  
+    padding: 5%;
+    
+    
+}
+.form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
