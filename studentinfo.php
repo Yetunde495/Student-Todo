@@ -5,7 +5,7 @@ require_once "includes/config.php";
 
 //defining my variables and initializing an empty value to it
 
-$firstname = $lastname = $email = $phonenumber = $note = "";
+$firstname = $lastname = $email = $phonenumber = $username = $password = $confirm_password = "";
 
 //processing data that would be submitted
 
@@ -137,47 +137,75 @@ $email = mysqli_real_escape_string($conn, $_POST['email']);
             mysqli_stmt_close($stmt);
         }
     }
-    //validate message
-    if(empty(trim($_POST['note']))) {
-        $note_err = "Please, enter a short note about your course and learning experience so far";
+    //validate username
+    if(empty(trim($_POST['username']))) {
+        $username_err = "Please, enter your preferred username";
+    } elseif (!preg_match('/^[a-zA-Z0-9_]+$/', trim($_POST["username"]))) {
+        //err code
+        $username_err = "Username can only be letters, numbers and underscores";
     } else {
         //preparing a select statement
-        $sql = "SELECT id FROM students WHERE note = ?";
+        $sql = "SELECT id FROM students WHERE username = ?";
 
         if ($stmt = mysqli_prepare($conn, $sql)) {
             //binding variable to the prepared statement
 
-            mysqli_stmt_bind_param($stmt, "s", $note);
+            mysqli_stmt_bind_param($stmt, "s", $param_username);
             //assign a value to the param message
-            $param_note = trim($_POST["note"]);
+            $param_username = trim($_POST["username"]);
 
             //execute the prepared statement
             if (mysqli_stmt_execute($stmt)) {
                 //store result 
                 mysqli_stmt_store_result($stmt);
-                $note = trim($_POST['note']);
+
+                if (mysqli_stmt_num_rows($stmt)) {
+                    $username_err = 'This username has been taken already. Please, enter another username';
+                } else {
+                    $username = trim($_POST['username']);  
+                }
+                
             } else {
                 echo "something is wrong";
             }
         } else {
             mysqli_stmt_close($stmt);
         }
+
+        //validate password
+        if (empty(trim($_POST["password"]))) {
+            $password_err = "please enter a password";
+        }elseif(strlen(trim($_POST["password"])) < 6) {
+            $password_err = "password must be at least 6 characters";
+        } else{
+            $password = trim($_POST["password"]);
+        }
+        //validate confirm password
+        if (empty(trim($_POST["confirm_password"]))) {
+            $confirm_password_err = "Please confirm password";
+        }else {
+            $confirm_password = trim($_POST["confirm_password"]);
+            if (empty($password_err) && ($password != $confirm_password)) {
+                $confirm_password_err = "Password did not match";
+            }
+        }
     }
 
     //checking other forms of errorrs
     if (empty($firstname_err) && empty($lastname_err) && empty($email_err) && 
-    empty($phonenumber_err) && empty($note_err)) {
+    empty($phonenumber_err) && empty($username_err) && empty($password_err)) {
         //prepare an insert statement
-        $sql = "INSERT INTO students (firstname, lastname, email, phonenumber, note) VALUES (?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO students (firstname, lastname, email, phonenumber, username, password) VALUES (?, ?, ?, ?, ?, ?)";
         if ($stmt = mysqli_prepare($conn, $sql)) {
-            mysqli_stmt_bind_param($stmt, "sssss", $param_firstname, $param_lastname, $param_email, $param_phonenumber, $param_note);
+            mysqli_stmt_bind_param($stmt, "ssssss", $param_firstname, $param_lastname, $param_email, $param_phonenumber, $param_username, $param_password);
 
             //set the parameters
             $param_firstname = $firstname;
             $param_lastname = $lastname;
             $param_email = $email;
             $param_phonenumber = $phonenumber;
-            $param_note = $note;
+            $param_username = $username;
+            $param_password = $password;
 
             //execute the prepared statement
             if (mysqli_stmt_execute($stmt)) {
@@ -198,20 +226,20 @@ $email = mysqli_real_escape_string($conn, $_POST['email']);
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="index">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/styles.css">
 </head>
-<body>
-    <section class="navbar-section">
+<body class="index">
 
+<!-- <section class="navbar-section">
     <nav class="navbar navbar-expand-lg navbar-dark">
-  <div class="container-fluid">
+     <div class="container-fluid">
     <a class="navbar-brand" href="#">
         <img class="navbar-logo" src="css/images/images-logo-dark.png" alt="">
     </a>
@@ -229,92 +257,95 @@ $email = mysqli_real_escape_string($conn, $_POST['email']);
         </ul>
 
 
-        <div class="ms-auto">
-            <button type="button" name="button" class="navbar-btn btn btn-md px-4 text-white">
-            <span class="btn-text">Sign Up</span></button> 
-            <button type="button" name="button" class="navbar-btn btn btn-md px-4 text-white" style="margin-left: 10px;">
-            <span class="btn-text">Login</span></button> 
-        
-        </div>
+
       
       
     </div>
-  </div>
-</nav>
-    </section>
+    </div>
+    </nav>
+    </section> -->
   
-  <section class="intro-section">
-      <div class="container-fluid"></div> 
-       <div class="row flex-md-row-reverse justify-content-center">
-        <div class="col-md-6">
-            <img src="css/images/image_processing20191104-3658-12n18dk.gif" alt="" class="w-100">
-        </div>
-        <div class="col-md-6 align-items-center">
-            <div class="intro-text text-center">
-                <h1><span style="color: #ffa500e0;">Welcome</span> to Osac To-do app sign up page</h1>
-                <p style="font-size: 1.5rem; font-weight:500;">Fill in the form below, to register your details</p>
-            </div>
-        </div>
-       </div>
-  </section>
+  
 
- <section class="form-section">
+
+
+
+
+ <section class="form-section s-pad">
     <div class="container form-container">
-       <div class="f shadow-lg card">  
+    <div class="f shadow-lg card">  
            
 
            <div class="text-center">
             <h1>Sign up</h1>
             <p>Fill in the form to register your details </p>
-       </div>
 
+            </div>
 
-               <div>
-                   <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post" class="form-section">
+            <div>
+                   <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post" class="form-r">
                
            <div class="mb-3">
                 <label  class="form-label">First Name</label> 
                 <input type="text" class="form-control <?php echo (!empty($firstname_err)) ? 'is-invalid' : ''; ?>"
-                value="<?php echo $firstname; ?>" name="firstname"> 
+                value="<?php echo $firstname; ?>" name="firstname" autocomplete="off"> 
                 <span class="invalid-feedback"><?php echo $firstname_err; ?></span>
             </div>
 
             <div class="mb-3">
                 <label  class="form-label">Last Name</label> 
                 <input type="text" class="form-control <?php echo (!empty($lastname_err)) ? 'is-invalid' : ''; ?>"
-                value="<?php echo $lastname; ?>" name="lastname"> 
+                value="<?php echo $lastname; ?>" name="lastname" autocomplete="off"> 
                 <span class="invalid-feedback"><?php echo $lastname_err; ?></span>
             </div>
 
             <div class="mb-3">
                 <label  class="form-label">Email</label> 
                 <input type="text" class="form-control <?php echo (!empty($email_err)) ? 'is-invalid' : ''; ?>"
-                value="<?php echo $email; ?>" name="email"> 
+                value="<?php echo $email; ?>" name="email" autocomplete="off"> 
                 <span class="invalid-feedback"><?php echo $email_err; ?></span>
             </div>
 
             <div class="mb-3">
                 <label  class="form-label">Phone Number</label> 
                 <input type="contact" class="form-control <?php echo (!empty($phonenumber_err)) ? 'is-invalid' : ''; ?>"
-                value="<?php echo $phonenumber; ?>" name="phonenumber"> 
+                value="<?php echo $phonenumber; ?>" name="phonenumber" autocomplete="off"> 
                 <span class="invalid-feedback"><?php echo $phonenumber_err; ?></span>
             </div>
 
             <div class="mb-3">
-                <label  class="form-label">Note</label> 
-                <input type="text" class="form-control <?php echo (!empty($note_err)) ? 'is-invalid' : ''; ?>"
-                value="<?php echo $note; ?>" name="note"> 
-                <span class="invalid-feedback"><?php echo $note_err; ?></span>
+                <label  class="form-label">Username</label> 
+                <input type="text" class="form-control <?php echo (!empty($username_err)) ? 'is-invalid' : ''; ?>"
+                value="<?php echo $username; ?>" name="username" autocomplete="off"> 
+                <span class="invalid-feedback"><?php echo $username_err; ?></span>
+
             </div>
 
             <div class="mb-3">
-                <input type="submit" class="btn btn-warning btn-md" value="submit" >
+                <label  class="form-label">Password</label> 
+                <input type="password" class="form-control <?php echo (!empty($password_err)) ? 'is-invalid' : ''; ?>"
+                value="<?php echo $password; ?>" name="password" autocomplete="off"> 
+                <span class="invalid-feedback"><?php echo $password_err; ?></span>
+
             </div>
+
+            <div class="mb-3">
+                <label  class="form-label">Confirm Password</label> 
+                <input type="password" class="form-control <?php echo (!empty($confirm_password_err)) ? 'is-invalid' : ''; ?>"
+                value="<?php echo $confirm_password; ?>" name="confirm_password"> 
+                <span class="invalid-feedback"><?php echo $confirm_password_err; ?></span>
+            </div>
+
+            <div class="mb-3">
+                <button type="submit" class="btn btn-warning btn-lg" value="submit"> Sign up</button>
+               
+            </div>
+            <p>Have an account already? <a href="signin.php">Sign in </a> </p>
             </form>
         </div>
-           
+               
        
-    </div>
+    </div>     
 </div>
 </section>
    

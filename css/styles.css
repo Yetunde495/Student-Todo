@@ -1,11 +1,16 @@
-html, body {
-    height: 100%;
-}
 
+.index {
+    min-height: 1000px; 
+    background-image: -webkit-linear-gradient(95deg, #f5b743e0 45%, #ffffff 30%);
+}
+.index-2 {
+    min-height: 1000px; 
+    background-image: -webkit-linear-gradient(95deg, #f5b743e0 30%, #ffffff 10%);
+}
 
 .navbar-section {
     padding: 1% 5%;
-    background-color: #ffa500e0;
+    background-color: #f5b743;
 }
 .navbar-logo {
    width: 200px; 
@@ -21,31 +26,42 @@ html, body {
     border-bottom-right-radius: 5px;
     background-color: #073d7ef0;
 }
+.s-pad {
+    padding: 5% 7%;
+}
+.r-pad {
+    padding: 5% 1%;
+}
 .btn-text {
     font-size: 20px;
     font-weight: 500;
 }
 
-.intro-section {
-    padding: 5% 5%;
-}
+
 .intro-text {
     padding: 15% 10% 15% 10%;
 }
 
-.form-section {
-    padding: 2% 7%;
+
+@media (min-width:768px) {
+    .title-text {
+        padding: 13% 7%;
+    }  
 }
+
+
+
 .f {
     background: linear-gradient(360deg, #f28e26 0%, #ffa500e0 100%); 
     width: 679px;  
-    padding: 5%;
-    
-    
+    padding: 5%;   
 }
 .form-container {
     display: flex;
     justify-content: center;
     align-items: center;
 }
+
+
+
 
